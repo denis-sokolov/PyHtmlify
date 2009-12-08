@@ -1,0 +1,1 @@
+document.getElementById('testJs').innerHTML = 'The Javascript works.'
