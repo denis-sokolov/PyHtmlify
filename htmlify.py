@@ -28,13 +28,23 @@ import os
 
 class Error(Exception): pass
 class OverwriteError(Error): pass
+class WritingError(Error): pass
 
 class Htmlifier:
 	force = False
 	def htmlify(self, input, output):
 		if os.path.exists(output) and not self.force:
 			raise OverwriteError('Destination exists and force mode is off.')
-		return ''
+		inf = open(input)
+		html = inf.read()
+		inf.close()
+
+		try:
+			outf = open(output, 'w')
+		except IOError:
+			raise WritingError('Destination cannot be opened for writing. Check your permissions.')
+		outf.write(html)
+		outf.close()
 
 def main():
 	from optparse import OptionParser
