@@ -32,12 +32,32 @@ class WritingError(Error): pass
 
 class Htmlifier:
 	force = False
+	addGpl3 = True
+	__gpl3 = '''<!--
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>
+-->
+'''
+
 	def htmlify(self, input, output):
 		if os.path.exists(output) and not self.force:
 			raise OverwriteError('Destination exists and force mode is off.')
 		inf = open(input)
 		html = inf.read()
 		inf.close()
+
+		if self.addGpl3 == True:
+			html = self.__gpl3 + html
 
 		try:
 			outf = open(output, 'w')
@@ -54,12 +74,15 @@ def main():
 		http://github.com/Akral/PyHtmlify''')
 	parser.add_option("-f", "--force", dest="force", default=False,
 		action="store_true", help="Overwrite files.")
+	parser.add_option("-g", "--addgpl3", dest="addgpl3", default=False,
+		action="store_true", help="Add GPLv3 license on top of the output.")
 	(options, args) = parser.parse_args()
 	if len(args) <> 2:
 		parser.error('You must specify two arguments.')
 
 	h = Htmlifier()
 	h.force = options.force
+	h.addGpl3 = options.addgpl3
 	try:
 		h.htmlify(input=args[0], output=args[1])
 	except OverwriteError:
