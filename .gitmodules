@@ -1,0 +1,3 @@
+[submodule "pymins"]
+	path = pymins
+	url = git://github.com/Akral/PyMins.git

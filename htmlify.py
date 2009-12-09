@@ -30,6 +30,10 @@ import base64
 import mimetypes
 from HTMLParser import HTMLParser
 
+from pymins.HtmlMinifier import HtmlMinifier
+from pymins.CssMinifier import CssMinifier
+from pymins.JavascriptMinifier import JavascriptMinifier
+
 class Error(Exception): pass
 class OverwriteError(Error): pass
 class WritingError(Error): pass
@@ -62,6 +66,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 		html = inf.read()
 		inf.close()
 
+		# Disabled due to annoying Python bug 6 years old!
+		# http://bugs.python.org/issue683938
+		# html = HtmlMinifier(html).minify().get()
+
 		parser = self.__Parser(os.path.dirname(input))
 		parser.feed(html)
 		html = parser.get()
@@ -93,10 +101,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 			attrs = dict(attrs)
 			if tag == 'script' and 'src' in attrs:
 				js = self.__file(attrs['src'])
+				js = JavascriptMinifier(js).minify().get()
 				del attrs['src']
 				self.__data.append('<script%s>%s</script>' % (self.__attrs(attrs), js))
 			elif tag == 'link' and 'rel' in attrs and attrs['rel'] == 'stylesheet' and 'href' in attrs:
 				css = self.__file(attrs['href'])
+				css = CssMinifier(css).minify().get()
 				self.__data.append('<style type="text/css">%s</style>' % css)
 			else:
 				if 'src' in attrs:
