@@ -83,25 +83,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 		def __init__(self, path):
 			self.path = path
 			self.__uriRe = re.compile('^(((http|ftp)s?|file)://|(mailto|gopher):)', re.I)
-			
+
 		def feed(self, html):
 			for scr in re.finditer(r'\<link [^>]*rel=[\'"]?stylesheet[^>]*>', html):
 				orig = scr.group(0)
 				path = re.search(r'href=[\'"]*([^ ]+)[\'"]', orig).group(1)
 				css = CssMinifier(self.__file(path)).minify().get()
 				html = html.replace(orig, '<style type="text/css">%s</style>' % css)
-			for scr in re.finditer(r'\<script [^>]*src=[\'"]*([^ >\'"]+)[^>]*>', html):
+			for scr in re.finditer(r'\<script [^>]*src=[\'"]?([^ >\'"]+)[^>]*>', html):
 				orig = scr.group(0)
 				path = scr.group(1)
 				js = JavascriptMinifier(self.__file(path)).minify().get()
 				html = html.replace(orig, '<script type="text/javascript">%s</script>' % js)
+			for r in re.finditer(r'(\<[^>]+(?:href|src)=[\'"])([^ >\'"]+)', html):
+				path = r.group(2)
+				html = html.replace(r.group(0), '%s%s' % (r.group(1), self.__uriToData(path)))
 			# @TODO:
-			# Handle images
-			# Handle other resources with src or href
 			# Handle other resources in CSS data
 			# Correctify regexes to account for pairing quotes
 			return html
-				
+
 		def __uriToData(self, uri):
 			if self.__uriRe.match(uri):
 				return uri
