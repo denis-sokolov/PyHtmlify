@@ -32,6 +32,7 @@ import mimetypes
 from pymins.HtmlMinifier import HtmlMinifier
 from pymins.CssMinifier import CssMinifier
 from pymins.JavascriptMinifier import JavascriptMinifier
+from PyCssMagic.CssMagic import CssMagic 
 
 class Error(Exception): pass
 class OverwriteError(Error): pass
@@ -89,6 +90,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 				orig = scr.group(0)
 				path = re.search(r'href=[\'"]*([^ ]+)[\'"]', orig).group(1)
 				css = CssMinifier(self.__file(path)).minify().get()
+				css = CssMagic(css).magic().get()
 				html = html.replace(orig, '<style type="text/css">%s</style>' % css)
 			for scr in re.finditer(r'\<script [^>]*src=[\'"]?([^ >\'"]+)[^>]*>', html):
 				orig = scr.group(0)
