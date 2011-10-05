@@ -1,0 +1,5 @@
+This tool smushes all resources in an HTML document to one file.
+
+CSS and Javascript are inlined, images are base64 encoded.
+
+It is meant for HTML/Javascript apps for easy distribution.
