@@ -1,6 +1,3 @@
 [submodule "pymins"]
 	path = pymins
 	url = git://github.com/Akral/PyMins.git
-[submodule "PyCssMagic"]
-	path = PyCssMagic
-	url = git@github.com:Akral/PyCssMagic.git
